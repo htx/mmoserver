@@ -82,8 +82,8 @@ rem --- Start of SET_DEFAULTS --------------------------------------------------
 :SET_DEFAULTS
 
 set DEPENDENCIES_VERSION=0.6.0
-set DEPENDENCIES_FILE=mmoserver-deps-%DEPENDENCIES_VERSION%.7z
-set DEPENDENCIES_URL=http://github.com/downloads/htx/mmoserver/%DEPENDENCIES_FILE%
+set DEPENDENCIES_FILE=mmoserver-deps-%DEPENDENCIES_VERSION%.tar.bz2
+set DEPENDENCIES_URL=http://github.com/htx/mmoserver/releases/download/v0.6.0/%DEPENDENCIES_FILE%
 set "PROJECT_BASE=%~dp0"
 set "PROJECT_DRIVE=%~d0"
 set PATH=%PROJECT_BASE%tools\windows;%PATH%
@@ -252,14 +252,14 @@ rem --- Downloads datafiles such as heightmaps needed to run the project.    ---
 :DOWNLOAD_HEIGHTMAP
 
 if not exist "data\heightmaps\%1.hmpw" (
-	if not exist "data\heightmaps\%1.hmpw.7z" (
+	if not exist "data\heightmaps\%1.hmpw.zip" (
 		echo ** Downloading Heightmap for %1 **
 		echo.
-		"wget" --no-check-certificate http://github.com/downloads/htx/swg-heightmaps/%1.hmpw.7z -O data\heightmaps\%1.hmpw.7z
+		"wget" --no-check-certificate http://github.com/htx/mmoserver/releases/download/v0.6.0/%1.hmpw.zip -O data\heightmaps\%1.hmpw.zip
 		echo ** Downloading heightmap complete **
 	)
 
-	"7z" x -y -odata\heightmaps data\heightmaps\%1.hmpw.7z 
+	"7z" x -y -odata\heightmaps data\heightmaps\%1.hmpw.zip 
 )
 
 goto :eof
@@ -318,7 +318,7 @@ if not exist "%DEPENDENCIES_FILE%" (
 if exist "%DEPENDENCIES_FILE%" (
 	echo Extracting dependencies ...
 
-	"7z" x -y "%DEPENDENCIES_FILE%"
+	"tar" -xvjf "%DEPENDENCIES_FILE%"
 	echo Complete!
 	echo.
 )
