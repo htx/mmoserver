@@ -120,7 +120,7 @@ bool TangibleObject::updateTimer(uint64 callTime)
 //build the customization string based on the rawdata
 void TangibleObject::buildTanoCustomization(uint8 len)
 {
-    uint8* theCustomization = new uint8[512];
+    uint8 theCustomization[512];
 
     uint16 byteCount = 4; // 2 byte header + 2 byte footer
     uint8 elementCount = 0;
@@ -147,7 +147,6 @@ void TangibleObject::buildTanoCustomization(uint8 len)
 
     if(!elementCount)
     {
-        theCustomization = NULL;
         setCustomizationStr(theCustomization);
         return;
     }
@@ -185,7 +184,6 @@ void TangibleObject::buildTanoCustomization(uint8 len)
     theCustomization[j+2] = '\0';
 
     setCustomizationStr(theCustomization);
-    delete [] theCustomization;
 }
 
 //=============================================================================
@@ -198,7 +196,7 @@ void TangibleObject::setCustomNameIncDB(const int8* name)
     sprintf(sql,"UPDATE %s.items SET customName='",gWorldManager->getDatabase()->galaxy());
     sqlPointer = sql + strlen(sql);
     sqlPointer += gWorldManager->getDatabase()->escapeString(sqlPointer,mCustomName.getAnsi(),mCustomName.getLength());
-    sprintf(restStr,"' WHERE id=%"PRIu64" ",this->getId());
+    sprintf(restStr,"' WHERE id=%" PRIu64 " ",this->getId());
 
     strcat(sql,restStr);
     gWorldManager->getDatabase()->executeSqlAsync(0,0,sql);
@@ -211,7 +209,7 @@ void TangibleObject::setCustomNameIncDB(const int8* name)
 void TangibleObject::setParentIdIncDB(uint64 parentId)
 {
     mParentId = parentId;
-    gWorldManager->getDatabase()->executeSqlAsync(0,0,"UPDATE %s.items SET parent_id=%"PRIu64" WHERE id=%"PRIu64"",gWorldManager->getDatabase()->galaxy(),mParentId,this->getId());
+    gWorldManager->getDatabase()->executeSqlAsync(0,0,"UPDATE %s.items SET parent_id=%" PRIu64 " WHERE id=%" PRIu64 "",gWorldManager->getDatabase()->galaxy(),mParentId,this->getId());
     
 }
 

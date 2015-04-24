@@ -30,12 +30,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <iostream>
 #include <sstream>
 
-// Fix for issues with glog redefining this constant
-#ifdef _WIN32
-#undef ERROR
-#endif
 
-#include <glog/logging.h>
+
+
+#include "Utils/logger.h"
 
 #include "Common/BuildInfo.h"
 #include "Utils/rand.h"
@@ -437,7 +435,7 @@ void CharacterLoginHandler::_processClusterZoneTransferApprovedByTicket(Message*
         asyncContainer->player		= playerObject;
         asyncContainer->callBack	= CLHCallBack_Transfer_Ticket;
 
-        mDatabase->executeSqlAsync(this,asyncContainer,"DELETE FROM %s.items WHERE id = %"PRIu64"", mDatabase->galaxy(),ticket->getId());
+        mDatabase->executeSqlAsync(this,asyncContainer,"DELETE FROM %s.items WHERE id = %" PRIu64 "", mDatabase->galaxy(),ticket->getId());
 
 
     }
@@ -461,7 +459,7 @@ void CharacterLoginHandler::_processClusterZoneTransferApprovedByPosition(Messag
         gWorldManager->savePlayerSync(playerObject->getAccountId(),false);
 
         // Now update the DB with the new location/planetId
-        mDatabase->destroyResult(mDatabase->executeSynchSql("UPDATE %s.characters SET parent_id=0,x='%f', y='0', z='%f', planet_id='%u' WHERE id='%"PRIu64"';",mDatabase->galaxy(),x,z,planetId,playerObject->getId()));
+        mDatabase->destroyResult(mDatabase->executeSynchSql("UPDATE %s.characters SET parent_id=0,x='%f', y='0', z='%f', planet_id='%u' WHERE id='%" PRIu64 "';",mDatabase->galaxy(),x,z,planetId,playerObject->getId()));
 
 
         gMessageLib->sendClusterZoneTransferCharacter(playerObject,planetId);

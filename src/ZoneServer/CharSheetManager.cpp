@@ -26,10 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "CharSheetManager.h"
 
-#ifdef _WIN32
-#undef ERROR
-#endif
-#include <glog/logging.h>
+
+#include "Utils/logger.h"
 
 #include "Badge.h"
 #include "Bank.h"
@@ -136,7 +134,10 @@ void CharSheetManager::handleDatabaseJobComplete(void* ref, DatabaseResult* resu
             mvFactions.push_back(BString(name.getAnsi()));
         }
 
-        LOG_IF(INFO, count) << "Loaded " << count << " factions";
+		if (count)
+		{
+			LOG(INFO) << "Loaded " << count << " factions";
+		}
 
         mDatabase->destroyDataBinding(binding);
 
@@ -160,7 +161,10 @@ void CharSheetManager::handleDatabaseJobComplete(void* ref, DatabaseResult* resu
             mvBadgeCategories.push_back(BString(name.getAnsi()));
         }
 
-        LOG_IF(INFO, count) << "Loaded " << count << " badge categories";
+		if (count)
+		{
+			LOG(INFO) << "Loaded " << count << " badge categories";
+		}
 
         mDatabase->destroyDataBinding(binding);
 
@@ -190,7 +194,10 @@ void CharSheetManager::handleDatabaseJobComplete(void* ref, DatabaseResult* resu
             mvBadges.push_back(badge);
         }
 
-        LOG_IF(INFO, count) << "Loaded " << count << " badges";
+		if (count)
+		{
+			LOG(INFO) << "Loaded " << count << " badges";
+		}
 
         mDatabase->destroyDataBinding(binding);
         //gLogger->log(LogManager::DEBUG,"Finished Loading Badges.");

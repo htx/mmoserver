@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ZoneServer.h"
 
-#include <glog/logging.h>
+#include "Utils/logger.h"
 
 #include <iostream>
 #include <fstream>
@@ -144,7 +144,7 @@ ZoneServer::ZoneServer(int argc, char* argv[])
     LoadOptions_(argc, argv, config_files);
 
 
-    LOG(ERROR) << "ZoneServer startup sequence for [" << mZoneName << "]";
+    LOG(ERR) << "ZoneServer startup sequence for [" << mZoneName << "]";
 
     // Create and startup our core services.
     mDatabaseManager = new DatabaseManager(DatabaseConfig(configuration_variables_map_["DBMinThreads"].as<uint32_t>(), configuration_variables_map_["DBMaxThreads"].as<uint32_t>(), configuration_variables_map_["DBGlobalSchema"].as<std::string>(), configuration_variables_map_["DBGalaxySchema"].as<std::string>(), configuration_variables_map_["DBConfigSchema"].as<std::string>()));
@@ -180,7 +180,7 @@ ZoneServer::ZoneServer(int argc, char* argv[])
 
     if (!result->getRowCount())
     {
-        LOG(ERROR) << "Map not found for [" << mZoneName << "]";
+        LOG(ERR) << "Map not found for [" << mZoneName << "]";
 
         abort();
     }
@@ -400,19 +400,6 @@ void ZoneServer::_connectToConnectionServer(void)
 
 int main(int argc, char* argv[])
 {
-    // Initialize the google logging.
-    google::InitGoogleLogging(argv[0]);
-
-#ifndef _WIN32
-    google::InstallFailureSignalHandler();
-#endif
-
-    FLAGS_log_dir = "./logs";
-    FLAGS_stderrthreshold = 0;
-
-    //set stdout buffers to 0 to force instant flush
-    setvbuf( stdout, NULL, _IONBF, 0);
-
     //try {
 
     // Start things up

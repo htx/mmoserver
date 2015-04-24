@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <iostream>
 #include <fstream>
 
-#include <glog/logging.h>
+#include "Utils/logger.h"
 // External references
 #include "ChatManager.h"
 #include "CSRManager.h"
@@ -267,19 +267,6 @@ void handleExit()
 
 int main(int argc, char* argv[])
 {
-    // Initialize the google logging.
-    google::InitGoogleLogging(argv[0]);
-
-#ifndef _WIN32
-    google::InstallFailureSignalHandler();
-#endif
-
-    FLAGS_log_dir = "./logs";
-    FLAGS_stderrthreshold = 1;
-
-    //set stdout buffers to 0 to force instant flush
-    setvbuf( stdout, NULL, _IONBF, 0);
-
     bool exit = false;
 	
 	try {

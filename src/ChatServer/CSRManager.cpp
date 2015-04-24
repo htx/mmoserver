@@ -31,12 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "CSROpcodes.h"
 #include "Player.h"
 
-// Fix for issues with glog redefining this constant
-#ifdef _WIN32
-#undef ERROR
-#endif
-
-#include <glog/logging.h>
+#include "Utils/logger.h"
 
 #include "DatabaseManager/Database.h"
 #include "DatabaseManager/DataBinding.h"
@@ -331,7 +326,7 @@ void CSRManager::_processGetTicketsMessage(Message *message, DispatchClient* cli
 {
     CSRAsyncContainer* asyncContainer = new CSRAsyncContainer(CSRQuery_Tickets);
     asyncContainer->mClient = client;
-    mDatabase->executeProcedureAsync(this, asyncContainer, "CALL %s.sp_CSRTicketGet (%"PRIu64");", mDatabase->galaxy(),  mChatManager->getPlayerByAccId(client->getAccountId())->getCharId());
+    mDatabase->executeProcedureAsync(this, asyncContainer, "CALL %s.sp_CSRTicketGet (%" PRIu64 ");", mDatabase->galaxy(),  mChatManager->getPlayerByAccId(client->getAccountId())->getCharId());
     
 }
 
@@ -341,7 +336,7 @@ void CSRManager::_processNewTicketActivityMessage(Message *message, DispatchClie
 {
 	CSRAsyncContainer* asyncContainer = new CSRAsyncContainer(CSRQuery_TicketActivity);
     asyncContainer->mClient = client;
-    mDatabase->executeProcedureAsync(this, asyncContainer, "CALL %s.sp_CSRTicketActivityGet (%"PRIu64");", mDatabase->galaxy(),  mChatManager->getPlayerByAccId(client->getAccountId())->getCharId());
+    mDatabase->executeProcedureAsync(this, asyncContainer, "CALL %s.sp_CSRTicketActivityGet (%" PRIu64 ");", mDatabase->galaxy(),  mChatManager->getPlayerByAccId(client->getAccountId())->getCharId());
     
 }
 

@@ -39,12 +39,12 @@ extern "C"
 #include "lualib.h"
 #include "lauxlib.h"
 }
-// Fix for issues with glog redefining this constant
+
 #ifdef ERROR
 #undef ERROR
 #endif
 
-#include <glog/logging.h>
+#include "Utils/logger.h"
 
 
 //======================================================================================================================
@@ -205,7 +205,7 @@ void Script::_formatError()
     lua_pop(mThreadState,1);
 
     strcpy(mLastError,msg);
-	LOG(ERROR) << "ScriptingEngine::callFunction wrong result type: " << mLastError;
+	LOG(ERR) << "ScriptingEngine::callFunction wrong result type: " << mLastError;
 }
 
 //======================================================================================================================

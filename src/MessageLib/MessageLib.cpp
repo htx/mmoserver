@@ -31,10 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/lexical_cast.hpp>
 
-#ifdef _WIN32
-#undef ERROR
-#endif
-#include <glog/logging.h>
+
+#include "Utils/logger.h"
 
 #include "Common/atMacroString.h"
 #include "Common/Crc.h"

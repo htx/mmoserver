@@ -27,10 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "SkillManager.h"
 
-#ifdef _WIN32
-#undef ERROR
-#endif
-#include <glog/logging.h>
+
+#include "Utils/logger.h"
 
 #include "CreatureObject.h"
 #include "PlayerObject.h"
@@ -484,13 +482,13 @@ bool SkillManager::learnSkill(uint32 skillId,CreatureObject* creatureObject,bool
 
     if (skill == NULL)
     {
-        LOG(ERROR) << "Could not find skill [" << skillId << "]";
+        LOG(ERR) << "Could not find skill [" << skillId << "]";
         return false;
     }
 
     if (creatureObject->checkSkill(skillId))
     {
-        LOG(ERROR) << "Object [" << creatureObject->getId() << "] already has skill [" << skillId << "]";
+        LOG(ERR) << "Object [" << creatureObject->getId() << "] already has skill [" << skillId << "]";
         return false;
     }
 
@@ -511,7 +509,7 @@ bool SkillManager::learnSkill(uint32 skillId,CreatureObject* creatureObject,bool
         //finding all the new schems for the skill!
         //player->addSchematicIds(skill);
 
-        mDatabase->executeSqlAsync(NULL,NULL,"INSERT INTO %s.character_skills VALUES (%"PRIu64",%u)",mDatabase->galaxy(),player->getId(),skillId);
+        mDatabase->executeSqlAsync(NULL,NULL,"INSERT INTO %s.character_skills VALUES (%" PRIu64 ",%u)",mDatabase->galaxy(),player->getId(),skillId);
         
 
         creatureObject->prepareSkillMods();
@@ -556,7 +554,7 @@ bool SkillManager::learnSkill(uint32 skillId,CreatureObject* creatureObject,bool
             (void)player->UpdateXp(skill->mXpType, newXpCost);
 
             // gLogger->log(LogManager::DEBUG,"SkillManager::learnSkill: Removing %i xp of type %u", -newXpCost, skill->mXpType);
-            mDatabase->executeSqlAsync(NULL,NULL,"UPDATE %s.character_xp SET value=value+%i WHERE xp_id=%u AND character_id=%"PRIu64"",mDatabase->galaxy(),newXpCost, skill->mXpType, player->getId());
+            mDatabase->executeSqlAsync(NULL,NULL,"UPDATE %s.character_xp SET value=value+%i WHERE xp_id=%u AND character_id=%" PRIu64 "",mDatabase->galaxy(),newXpCost, skill->mXpType, player->getId());
             
             gMessageLib->sendXpUpdate(skill->mXpType,player);
         }
@@ -822,18 +820,18 @@ void SkillManager::dropSkill(uint32 skillId,CreatureObject* creatureObject, bool
 
     if(skill == NULL)
     {
-    	LOG(ERROR) << "Could not find skill [" << skillId << "]";
+    	LOG(ERR) << "Could not find skill [" << skillId << "]";
         return;
     }
 
     if(!(creatureObject->checkSkill(skillId)))
     {
-    	LOG(ERROR) << "Object [" << creatureObject->getId() << "] does not have skill [" << skillId << "]";
+    	LOG(ERR) << "Object [" << creatureObject->getId() << "] does not have skill [" << skillId << "]";
         return;
     }
 
     if(!(creatureObject->removeSkill(skill)))
-    	LOG(ERROR) << "Failed removing skill [" << skillId << "] from object [" << creatureObject->getId() << "]";
+    	LOG(ERR) << "Failed removing skill [" << skillId << "] from object [" << creatureObject->getId() << "]";
 
     creatureObject->prepareSkillMods();
     creatureObject->prepareSkillCommands();
@@ -844,7 +842,7 @@ void SkillManager::dropSkill(uint32 skillId,CreatureObject* creatureObject, bool
 
         player->prepareSchematicIds();
 
-        mDatabase->executeSqlAsync(NULL,NULL,"DELETE FROM %s.character_skills WHERE character_id=%"PRIu64" AND skill_id=%u",mDatabase->galaxy(),player->getId(),skillId);
+        mDatabase->executeSqlAsync(NULL,NULL,"DELETE FROM %s.character_skills WHERE character_id=%" PRIu64 " AND skill_id=%u",mDatabase->galaxy(),player->getId(),skillId);
         
 
         gMessageLib->sendSkillDeltasCreo1(skill,SMSkillRemove,player);
@@ -959,7 +957,7 @@ void SkillManager::initExperience(PlayerObject* playerObject)
                 playerObject->addXpType(xpType);
 
                 // Create entry in DB.
-                mDatabase->executeSqlAsync(NULL,NULL,"INSERT INTO %s.character_xp VALUES (%"PRIu64",%u,0)",mDatabase->galaxy(),playerObject->getId(),xpType);
+                mDatabase->executeSqlAsync(NULL,NULL,"INSERT INTO %s.character_xp VALUES (%" PRIu64 ",%u,0)",mDatabase->galaxy(),playerObject->getId(),xpType);
                 
 
                 // Add this type of xp cap.
@@ -1141,7 +1139,7 @@ void SkillManager::addExperience(uint32 xpType,int32 valueDiff,PlayerObject* pla
         // gLogger->log(LogManager::DEBUG,"SkillManager::addExperience: XP cap = %u", xpCap);
         // gLogger->log(LogManager::DEBUG,"SkillManager::addExperience: Adding %u xp of type %u to database", newXpBoost, xpType);
 
-        mDatabase->executeSqlAsync(NULL,NULL,"UPDATE %s.character_xp SET value=value+%i WHERE character_id=%"PRIu64" AND xp_id=%u",mDatabase->galaxy(), newXpBoost, playerObject->getId(), xpType);
+        mDatabase->executeSqlAsync(NULL,NULL,"UPDATE %s.character_xp SET value=value+%i WHERE character_id=%" PRIu64 " AND xp_id=%u",mDatabase->galaxy(), newXpBoost, playerObject->getId(), xpType);
         
 
         // ...THEN we get any messages of new skills qualifications.
@@ -1157,12 +1155,12 @@ void SkillManager::removeExperience(uint32 xpType,int32 valueDiff,PlayerObject* 
 {
 	if(!(playerObject->UpdateXp(xpType,-valueDiff)))
 	{
-		gLogger->log(LogManager::DEBUG,"SkillManager::gainXp: could not find xptype %u for %"PRIu64"",xpType,playerObject->getId());
+		gLogger->log(LogManager::DEBUG,"SkillManager::gainXp: could not find xptype %u for %" PRIu64 "",xpType,playerObject->getId());
 		return;
 	}
 
 	gLogger->log(LogManager::DEBUG,"SkillManager::removeExperience: Removing %i xp of type %u", -valueDiff, xpType);
-	mDatabase->ExecuteSqlAsync(NULL,NULL,"UPDATE character_xp SET value=value-%i WHERE character_id=%"PRIu64" AND xp_id=%u",valueDiff,playerObject->getId(),xpType);
+	mDatabase->ExecuteSqlAsync(NULL,NULL,"UPDATE character_xp SET value=value-%i WHERE character_id=%" PRIu64 " AND xp_id=%u",valueDiff,playerObject->getId(),xpType);
 
 	gMessageLib->sendXpUpdate(xpType,playerObject);
 }

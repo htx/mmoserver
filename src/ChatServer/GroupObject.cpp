@@ -34,12 +34,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "GroupObject.h"
 #include "Player.h"
 
-// Fix for issues with glog redefining this constant
-#ifdef _WIN32
-#undef ERROR
-#endif
 
-#include <glog/logging.h>
+
+
+#include "Utils/logger.h"
 
 #include "NetworkManager/DispatchClient.h"
 #include "NetworkManager/Message.h"
@@ -327,7 +325,7 @@ void GroupObject::createChannel()
     Channel* channel = new Channel();
     channel->setId(((uint32)(mId)) + 0xf0000000);
     channel->setCreator(gSystemAvatar);
-    sprintf(channelName, "%"PRIu64".GroupChat", mId);
+    sprintf(channelName, "%" PRIu64 ".GroupChat", mId);
     channel->setName(BString(channelName));
     channel->setGalaxy(gChatManager->getGalaxyName());
 

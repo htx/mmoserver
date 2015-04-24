@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstdio>
 #include <cstring>
 
-// Fix for issues with glog redefining this constant
+
 #ifdef ERROR
 #undef ERROR
 #endif
@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma warning(disable : 4251)
 #endif
 
-#include <glog/logging.h>
+#include "Utils/logger.h"
 
 #include <mysql_connection.h>
 #include <mysql_driver.h>
@@ -120,6 +120,16 @@ void DatabaseImplementationMySql::destroyResult(DatabaseResult* result) {
         }
     }
 
+	//
+	sql::Statement* statement = result->getStatement().get();
+	result->getStatement().release();
+	delete(statement);
+	
+	sql::ResultSet* res = result->getResultSet().get();
+	result->getResultSet().release();
+	delete(res);
+	//
+
     ResultPool::ordered_free(result);
 }
 
@@ -157,14 +167,14 @@ void DatabaseImplementationMySql::getNextRow(DatabaseResult* result, DataBinding
 
 void DatabaseImplementationMySql::resetRowIndex(DatabaseResult* result, uint64_t index) const {
     if(!result) {
-        LOG(ERROR) << "Bad Ptr 'DatabaseResult* result' at DatabaseImplementationMySql::ResetRowIndex.";
+        LOG(ERR) << "Bad Ptr 'DatabaseResult* result' at DatabaseImplementationMySql::ResetRowIndex.";
         return;
     }
 
     std::unique_ptr<sql::ResultSet>& result_set = result->getResultSet();
 
     if (!result_set) {
-        LOG(ERROR) <<"Bad Ptr '(MYSQL_RES*)result->getResultSetReference()' at DatabaseImplementationMySql::ResetRowIndex.";
+        LOG(ERR) <<"Bad Ptr '(MYSQL_RES*)result->getResultSetReference()' at DatabaseImplementationMySql::ResetRowIndex.";
         return;
     }
 
@@ -174,12 +184,12 @@ void DatabaseImplementationMySql::resetRowIndex(DatabaseResult* result, uint64_t
 
 uint32_t DatabaseImplementationMySql::escapeString(char* target, const char* source, uint32_t length) {
     if (!target) {
-        LOG(ERROR) << "Bad Ptr 'int8* target' at DatabaseImplementationMySql::Escape_String.";
+        LOG(ERR) << "Bad Ptr 'int8* target' at DatabaseImplementationMySql::Escape_String.";
         return 0;
     }
 
     if (!source) {
-        LOG(ERROR) << "Bad Ptr 'const int8* source' at DatabaseImplementationMySql::Escape_String.";
+        LOG(ERR) << "Bad Ptr 'const int8* source' at DatabaseImplementationMySql::Escape_String.";
         return 0;
     }
 

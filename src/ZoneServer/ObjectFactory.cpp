@@ -31,10 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cppconn/resultset.h>
 
-#ifdef _WIN32
-#undef ERROR
-#endif
-#include <glog/logging.h>
+
+#include "Utils/logger.h"
 
 #include "Utils/utils.h"
 
@@ -585,7 +583,7 @@ void ObjectFactory::requestnewHousebyDeed(ObjectFactoryCallback* ofCallback,Deed
 
         if(!requestId)
         {
-            LOG(ERROR) << "Create house failed : result is 0";
+            LOG(ERR) << "Create house failed : result is 0";
         }
 
         mHouseFactory->requestObject(ofCallback,requestId,0,0,client);

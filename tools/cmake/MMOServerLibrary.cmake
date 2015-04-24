@@ -120,16 +120,14 @@ FUNCTION(AddMMOServerLibrary name)
             debug ${Boost_REGEX_LIBRARY_DEBUG}
             debug ${Boost_SYSTEM_LIBRARY_DEBUG}
             debug ${Boost_THREAD_LIBRARY_DEBUG}
-            debug ${GLOG_LIBRARY_DEBUG}
-            # debug ${GMOCK_LIBRARY_DEBUG}
+            debug ${Boost_LOG_LIBRARY_DEBUG}
             debug ${TBB_LIBRARY_DEBUG}
             debug ${TBB_MALLOC_LIBRARY_DEBUG}      
             optimized ${Boost_DATE_TIME_LIBRARY_RELEASE}
             optimized ${Boost_REGEX_LIBRARY_RELEASE}
             optimized ${Boost_SYSTEM_LIBRARY_RELEASE}
             optimized ${Boost_THREAD_LIBRARY_RELEASE}
-            optimized ${GLOG_LIBRARY_RELEASE}
-            # optimized ${GMOCK_LIBRARY_RELEASE}
+            optimized ${Boost_LOG_LIBRARY_RELEASE}
             optimized ${TBB_LIBRARY}
             optimized ${TBB_MALLOC_LIBRARY})
                 

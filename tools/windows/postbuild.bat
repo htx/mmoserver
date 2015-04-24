@@ -7,10 +7,6 @@ if not exist %1 (
 
 cd %1
 
-if not exist %2\bin\%3\libglog.dll (
-    xcopy %1\deps\src\glog\%3\libglog.dll %2\bin\%3\ /I /Y /s
-)
-
 if not exist %2\bin\%3\libmysql.dll (
     xcopy %1\deps\src\mysql-connector-c\libmysql\%3\libmysql.dll %2\bin\%3\ /I /Y /s
 )

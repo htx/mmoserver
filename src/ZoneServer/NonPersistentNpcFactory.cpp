@@ -27,10 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "NonPersistentNpcFactory.h"
 
-#ifdef _WIN32
-#undef ERROR
-#endif
-#include <glog/logging.h>
+
+#include "Utils/logger.h"
 
 #include "PlayerEnums.h"
 #include "AttackableCreature.h"
@@ -159,7 +157,7 @@ NonPersistentNpcFactory::~NonPersistentNpcFactory()
 void NonPersistentNpcFactory::handleDatabaseJobComplete(void* ref,DatabaseResult* result)
 {
     if(!result) { //Crash bug; http://paste.swganh.org/viewp.php?id=20100627073558-0930186c997f6dae885bf5b9b0655b8f
-    	LOG(ERROR) << "Database result is invalid";
+    	LOG(ERR) << "Database result is invalid";
         return;
     }
     QueryNonPersistentNpcFactory* asyncContainer = reinterpret_cast<QueryNonPersistentNpcFactory*>(ref);
@@ -179,7 +177,7 @@ void NonPersistentNpcFactory::handleDatabaseJobComplete(void* ref,DatabaseResult
         }
         else
         {
-        	LOG(ERROR) << "NonPersistentNpcFactory::handleDatabaseJobComplete Object cannot be found";
+        	LOG(ERR) << "NonPersistentNpcFactory::handleDatabaseJobComplete Object cannot be found";
         }
     }
     break;
@@ -326,7 +324,7 @@ void NonPersistentNpcFactory::handleDatabaseJobComplete(void* ref,DatabaseResult
         QueryNonPersistentNpcFactory* asContainer = new QueryNonPersistentNpcFactory(asyncContainer->mOfCallback,NonPersistentNpcQuery_Attributes, 0, npc->getId());
 
         mDatabase->executeSqlAsync(this,asContainer,"SELECT attributes.name,lair_attributes.value,attributes.internal FROM %s.lair_attributes "
-                                                    "INNER JOIN %s.attributes ON (lair_attributes.attribute_id = attributes.id) WHERE lair_attributes.lair_id = %"PRIu64" ORDER BY lair_attributes.order",
+                                                    "INNER JOIN %s.attributes ON (lair_attributes.attribute_id = attributes.id) WHERE lair_attributes.lair_id = %" PRIu64 " ORDER BY lair_attributes.order",
                                                     mDatabase->galaxy(),mDatabase->galaxy(),asyncContainer->mTemplateId);
         
     }
@@ -338,7 +336,7 @@ void NonPersistentNpcFactory::handleDatabaseJobComplete(void* ref,DatabaseResult
         //we can't assert here, as not all npc types are implemented (yet)
         //assert(npc);
         if(!npc) {
-        	LOG(ERROR) << "Unable to create non-persistent npc";
+        	LOG(ERR) << "Unable to create non-persistent npc";
             break;
         }
 
@@ -359,7 +357,7 @@ void NonPersistentNpcFactory::handleDatabaseJobComplete(void* ref,DatabaseResult
             mDatabase->executeSqlAsync(this,asContainer,"SELECT attributes.name,non_persistent_npc_attributes.value,attributes.internal"
                                        " FROM %s.non_persistent_npc_attributes"
                                        " INNER JOIN %s.attributes ON (non_persistent_npc_attributes.attribute_id = attributes.id)"
-                                       " WHERE non_persistent_npc_attributes.npc_id = %"PRIu64" ORDER BY non_persistent_npc_attributes.order",
+                                       " WHERE non_persistent_npc_attributes.npc_id = %" PRIu64 " ORDER BY non_persistent_npc_attributes.order",
                                        mDatabase->galaxy(),mDatabase->galaxy(),asyncContainer->mTemplateId);
              }
     }
@@ -447,7 +445,7 @@ NPCObject* NonPersistentNpcFactory::createNonPersistentNpc(DatabaseResult* resul
         // First time lairs.
 
         //Lairs are not supported here, at least not yet.
-    	LOG(ERROR) << "NaturalLairs family [" << familyId << "] not implemented";
+    	LOG(ERR) << "NaturalLairs family [" << familyId << "] not implemented";
         return NULL;
         //npc	= new LairObject(templateId);
     }
@@ -455,7 +453,7 @@ NPCObject* NonPersistentNpcFactory::createNonPersistentNpc(DatabaseResult* resul
 
     default:
     {
-    	LOG(ERROR) << "Unknown family [" << familyId << "]";
+    	LOG(ERR) << "Unknown family [" << familyId << "]";
         return NULL;
         //npc = new NPCObject();
     }
@@ -508,7 +506,7 @@ NPCObject* NonPersistentNpcFactory::createNonPersistentNpc(DatabaseResult* resul
     else if (npc->getNpcFamily() == NpcFamily_NaturalLairs)
     {
         //Lairs are not supported here, at least not yet.
-    	LOG(ERROR) << "NaturalLairs family [" << familyId << "] not implemented";
+    	LOG(ERR) << "NaturalLairs family [" << familyId << "] not implemented";
         return NULL;
 
         // Dynamic spawned pve-enabled "static" creatures like lairs.
@@ -680,6 +678,6 @@ void NonPersistentNpcFactory::requestNpcObject(ObjectFactoryCallback* ofCallback
                                "non_persistent_npcs.moodID, non_persistent_npcs.scale, non_persistent_npcs.family "
                                "FROM %s.non_persistent_npcs "
                                "INNER JOIN %s.faction ON (non_persistent_npcs.faction = faction.id) "
-                               "WHERE non_persistent_npcs.id=%"PRIu64";",mDatabase->galaxy(),mDatabase->galaxy(), creatureTemplateId);
+                               "WHERE non_persistent_npcs.id=%" PRIu64 ";",mDatabase->galaxy(),mDatabase->galaxy(), creatureTemplateId);
    
 }

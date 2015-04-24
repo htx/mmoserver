@@ -36,12 +36,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ZoneServer/WorldManager.h"
 #include "ZoneServer/ZoneOpcodes.h"
 
-// Fix for issues with glog redefining this constant
+
 #ifdef ERROR
 #undef ERROR
 #endif
 
-#include <glog/logging.h>
+#include "Utils/logger.h"
 
 #include "NetworkManager/DispatchClient.h"
 #include "NetworkManager/Message.h"
@@ -1366,12 +1366,11 @@ bool MessageLib::sendSkillModDeltasCREO_4(SkillModsList smList,uint8 remove,Crea
     mMessageFactory->addUint32(smList.size());
 
     mMessageFactory->addUint32(playerObject->getAndIncrementSkillModUpdateCounter(smList.size()));
-    mMessageFactory->addUint8(remove);
 
     it = smList.begin();
     while(it != smList.end())
     {
-        mMessageFactory->addUint8(0);
+        mMessageFactory->addUint8(remove);
         mMessageFactory->addString(gSkillManager->getSkillModById((*it).first));
         mMessageFactory->addUint32((*it).second);
         mMessageFactory->addUint32(0);

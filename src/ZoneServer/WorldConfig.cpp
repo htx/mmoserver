@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "WorldConfig.h"
 
-#include <glog/logging.h>
+#include "Utils/logger.h"
 
 #include "DatabaseManager/Database.h"
 #include "DatabaseManager/DatabaseResult.h"
@@ -225,7 +225,10 @@ void WorldConfig::buildAttributeMap(DatabaseResult* result)
         }
     }
 
-    LOG_IF(INFO, count > 0) << "Mapped attributes mapped: [" << count << "]";
+	if (count)
+	{
+		LOG(INFO) << "Mapped attributes mapped: [" << count << "]";
+	}
 
 }
 

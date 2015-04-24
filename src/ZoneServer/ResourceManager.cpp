@@ -27,10 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ResourceManager.h"
 
-#ifdef _WIN32
-#undef ERROR
-#endif
-#include <glog/logging.h>
+
+#include "Utils/logger.h"
 
 #include "CurrentResource.h"
 #include "ResourceCategory.h"
@@ -287,7 +285,10 @@ void ResourceManager::handleDatabaseJobComplete(void* ref,DatabaseResult* result
                 delete(resource);
         }
 
-        LOG_IF(INFO, count) << "Loaded " << count << " resources";
+		if (count)
+		{
+			LOG(INFO) << "Loaded " << count << " resources";
+		}
     }
     break;
 
@@ -309,7 +310,10 @@ void ResourceManager::handleDatabaseJobComplete(void* ref,DatabaseResult* result
             (getResourceCategoryById(resource->mType->mCatId))->insertResource(resource);
         }
 
-        LOG_IF(INFO, count) << "Generated " << count << " resource maps";
+		if (count)
+		{
+			LOG(INFO) << "Generated " << count << " resource maps";
+		}
 
         // query old and current resources not from this planet
         mDatabase->executeSqlAsync(this,new(mDBAsyncPool.ordered_malloc()) RMAsyncContainer(RMQuery_OldResources),
@@ -404,7 +408,7 @@ bool ResourceManager::setResourceDepletion(Resource* resource, int32 amt)
     if (it != mResourceIdMap.end() && resource->getCurrent() != 0)
     {
         asyncContainer->mCurrentResource = resource;
-        mDatabase->executeSqlAsync(this,asyncContainer,"update resources_spawn_config set unitsLeft = unitsLeft - %u where resource_id = %"PRIu64"",amt ,resource->getId());
+        mDatabase->executeSqlAsync(this,asyncContainer,"update resources_spawn_config set unitsLeft = unitsLeft - %u where resource_id = %" PRIu64 "",amt ,resource->getId());
         
     }
     else

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "WorldConfig.h"
 
-#include <glog/logging.h>
+#include "Utils/logger.h"
 
 #include "UIManager.h"
 #include "Common/atMacroString.h"
@@ -129,7 +129,7 @@ void UIManager::_processEventNotification(Message* message,DispatchClient* clien
 
     if(window == NULL)
     {
-    	LOG(ERROR) << "Could not find window [" << windowId << "]";
+    	LOG(ERR) << "Could not find window [" << windowId << "]";
         return;
     }
 
@@ -348,7 +348,7 @@ void UIManager::destroyUIWindow(uint32 id,bool sendForceClose)
         mUIWindows.erase(it);
     }
     else
-    	LOG(ERROR) << "Could not find window [" << id << "]";
+    	LOG(ERR) << "Could not find window [" << id << "]";
 }
 
 //======================================================================================================================
